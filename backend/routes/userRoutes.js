@@ -13,30 +13,30 @@ router.get('/signup', function(req, res, next) {
 
 
 function signupErrors(message) {
-  let errors = { username: '', email: '', password: '', nullVal: '' }
+  let errors = { msg: '' }
   
   if (message === "username must be unique") {
-    errors.username = "This username is already taken"
+    errors.msg = "This username is already taken"
   } 
 
   if (message === "Validation len on username failed") {
-    errors.username = "Username must be between 4 and 25 characters"
+    errors.msg = "Username must be between 4 and 25 characters"
   }
   
   if (message === "email must be unique") {
-    errors.email = "This email is already registered"
+    errors.msg = "This email is already registered"
   } 
   
   if (message === "Validation isEmail on email failed") {
-    errors.email = "Must be a valid email"
+    errors.msg = "Must be a valid email"
   }
 
   if (message === "Validation len on password failed") {
-    errors.password = "Password must be at least 6 characters"
+    errors.msg = "Password must be at least 6 characters"
   }
   
   if (message.includes("null")) {
-    errors.nullVal = "Username, Email, and Password fields must be entered"
+    errors.msg = "Username, Email, and Password fields must be entered"
   }
   return errors;
 }
