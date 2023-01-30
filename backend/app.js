@@ -5,11 +5,6 @@ const cors = require('cors');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const { User } = require("./models");
-const passport = require('passport')
-require('./config/passport')(passport, User);
-const session = require('express-session');
-const pgSession = require('connect-pg-simple')(session);
-const pg = require('pg');
 const bodyParser = require('body-parser');
 
 const corsOptions = {
@@ -35,31 +30,9 @@ var app = express();
 
 app.use(logger('dev'));
 app.use(cors(corsOptions));
-// app.use(session({ secret: process.env.SESSION_SECRET, resave: true, saveUninitialized:true}));
 
-// const pgPool = new pg.Pool({
-//     user: process.env.DBUSER,
-//     host: process.env.DBHOST,
-//     database: process.env.DBNAME,
-//     password: process.env.DBPASS,
-//     port: 5432,
-//     max: 10000,
-//     idleTimeoutMillis: 1 * 24 * 60 * 60 * 1000
-// });
-
-// app.use(session({
-//     store: new pgSession({
-//         pool: pgPool,
-//         tableName : 'user_sessions'
-//     }),
-//     secret: process.env.SESSION_SECRET,
-//     resave: false,
-//     saveUninitialized: true,
-//     cookie: { maxAge: 3 * 24 * 60 * 60 * 1000 } // 3 days
-//   }));
 app.use(bodyParser.json())
-// app.use(passport.initialize())
-// app.use(passport.session())
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());

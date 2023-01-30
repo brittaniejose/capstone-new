@@ -40,6 +40,11 @@ function signupErrors(message) {
   }
   return errors;
 }
+//Token Creation
+const maxAge = 1 * 24 * 60 * 60;
+const createToken = (id) => {
+  return jwt.sign({id}, process.env.SESSION_SECRET, {expiresIn: maxAge})
+}
 
 router.post('/signup', async function(req, res) {
   const { displayName, username, email, password } = req.body;
@@ -53,14 +58,15 @@ router.post('/signup', async function(req, res) {
 
     const newUser = await User.create({ displayName, username, email, password: hashedPassword });
     console.log(newUser, 'newUser created');
+    const token = createToken(newUser.id);
 
-
-    const userObj = {
+    const authUser = {
       user: newUser,
+      token: token,
       message: "Thank you for joining. Redirecting you to the homepage."
     };
 
-    res.status(200).json(userObj);
+    res.status(200).json(authUser);
   } catch (error) {
     if(error instanceof Sequelize.ValidationError){
       let message = error.errors.map(e => e.message).join(', ');
@@ -84,7 +90,7 @@ router.post('/login', async function (req, res) {
   const { usernameOrEmail, password } = req.body;
 
   if (!usernameOrEmail) {
-    return res.status(400).json({ nullMessage: "Username or Email is required" });
+    return res.status(400).json({ errorMsg: "Username or Email is required" });
   }
   
   try {
@@ -93,16 +99,18 @@ router.post('/login', async function (req, res) {
     if(existingUser) {
       const auth = await bcrypt.compare(password, existingUser.password);
       if (auth) {
+        const token = createToken(existingUser.id);
         const authUser = {
           user: existingUser,
+          token: token,
           message: "Login Successful"
         }
         res.status(200).json(authUser)
       } else {
-        res.status(400).json({passMessage: "Password Incorrect"})
+        res.status(400).json({errorMsg: "Password Incorrect"})
       }
     } else {
-      res.status(400).json({noUserMessage: "No user found with these credentials"})
+      res.status(400).json({errorMsg: "No user found with these credentials"})
     }
   } catch (error) {
     console.log(error)

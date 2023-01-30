@@ -8,7 +8,7 @@ const routeHelpers = require('../helperFns/routeHelpers');
 // Posts GET All
 router.get('/', async function (req, res) {
     try {
-        const posts = await Post.findAll({
+        let posts = await Post.findAll({
             include: [
                 { model: User, attributes: ["id", "username", "displayName", "icon"] },
                 { model: Tag, attributes: ["name"] }

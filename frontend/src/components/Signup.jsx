@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -10,6 +9,12 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Alert from "@mui/material/Alert";
 
+const setLocalStorageItems = (items) => {
+    console.log('setting items');
+    for (let key in items) {
+        localStorage.setItem(key, items[key]);
+    }
+}
 function Copyright() {
   return (
     <Typography variant="body2" color="text.secondary" align="center">
@@ -30,8 +35,6 @@ function Signup() {
   const [password, setPassword] = useState("");
   const [signupError, setSignupError] = useState("");
 
-  const navigate = useNavigate();
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -49,12 +52,19 @@ function Signup() {
     });
 
     const resUser = await response.json();
-    console.log(resUser, "user response @ signup form ln 47");
+    console.log(resUser, "user response @ signup form ln 55");
 
-    if (resUser.errors.msg) {
+    if (resUser.errors) {
       setSignupError(resUser.errors.msg);
     } else {
-      navigate("/");
+        setLocalStorageItems({
+            token: resUser.token,
+            userID: resUser.user.id,
+            username: resUser.user.username,
+            displayName: resUser.user.displayName
+        });
+        console.log('signup success')
+
     }
   };
 

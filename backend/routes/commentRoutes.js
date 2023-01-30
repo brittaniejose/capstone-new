@@ -1,11 +1,11 @@
 var express = require('express');
 var router = express.Router();
 const Sequelize = require('sequelize');
-const { User, Post, Comment, Hashtag } = require("../models");
+const { User, Post, Comment, Hashtag, Location } = require("../models");
 const routeHelpers = require('../helperFns/routeHelpers');
 
 // GET All Comments for a Post
-router.get('/:postID', async function (req, res) {
+router.get('/post/:postID', async function (req, res) {
     const { postID } = req.params
     try {
         const comments = await Comment.findAll({ where: { postID: postID }, include: [{ 
@@ -25,6 +25,45 @@ router.get('/:postID', async function (req, res) {
             }] });
 
         const replyingToUsername = post.User.username;
+
+        if (comments.length > 0) {
+            const commentsObj = {
+                comments: modifiedComments,
+                replyingTo: `Replying to @${replyingToUsername}`
+            }
+            res.status(200).json(commentsObj)
+        } else {
+            res.status(200).json({commentsMessage: "No comments yet"})
+        }
+        
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({serverMessage: "Our server is experiencing some issues. Please try again later"})
+    }
+  
+});
+
+// GET All Comments for a location
+router.get('/location/:locationID', async function (req, res) {
+    const { locationID } = req.params
+    try {
+        const comments = await Comment.findAll({ where: { locationID: locationID }, include: [{ 
+            model: User, 
+            attributes: ["id", "username", "displayName", "icon"] 
+        }]})
+
+        const modifiedComments = comments.map(comment => {
+            comment.User.username = "@" + comment.User.username;
+            return comment;
+        });
+
+        const location = await Location.findOne({ where: { id: locationID }, 
+            include: [{ 
+                model: User, 
+                attributes: ["username"] 
+            }] });
+
+        const replyingToUsername = location.User.username;
 
         if (comments.length > 0) {
             const commentsObj = {
@@ -73,9 +112,9 @@ router.get('/user/:username', async function (req, res) {
 // create comments
 router.post("/create", async function (req, res) {
     // const { postID } = req.params;
-    const { content, postID, locationID } = req.body;
+    const { content, postID, locationID, userID } = req.body;
     // GET USER ID FROM REQ USER COOKIE AND REPLACE HARDCODED
-    const userID = 1;
+    // const userID = 3;
     try {
         const comment = await Comment.create({ content: content, postID: postID, userID: userID, locationID: locationID })
 

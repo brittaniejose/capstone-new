@@ -7,8 +7,12 @@ import SearchIcon from "@mui/icons-material/Search";
 import Typography from "@mui/material/Typography";
 import { Link } from "react-router-dom";
 import { Outlet } from "react-router-dom";
+import { useContext } from 'react';
+import { UserContext } from '../Contexts';
+import BasicMenu from "./BasicMenu";
 
 function Header() {
+  const user = useContext(UserContext);
   //   const { sections, title } = props;
   const sections = [
     { title: "Posts", page: "posts" },
@@ -21,13 +25,9 @@ function Header() {
   return (
     <React.Fragment>
       <Toolbar sx={{ borderBottom: 1, borderColor: "divider" }}>
-        <Button size="small">
-          <Link
-            to="/profile"
-            style={{ textDecoration: "none", color: "inherit" }}>
-            Profile
-          </Link>
-        </Button>
+      <IconButton>
+          <SearchIcon />
+        </IconButton>
         <Typography
           component="h2"
           variant="h5"
@@ -38,9 +38,8 @@ function Header() {
             SkateMates
           </Link>
         </Typography>
-        <IconButton>
-          <SearchIcon />
-        </IconButton>
+        {!user ?
+        <>
         <Button variant="outlined" size="small">
           <Link
             to="/signup"
@@ -63,27 +62,20 @@ function Header() {
             Login
           </Link>
         </Button>
-        <Button variant="text" size="small">
-          <Link
-            to="/logout"
-            style={{
-              textDecoration: "none",
-              color: "inherit",
-              whiteSpace: "nowrap",
-            }}>
-            Logout
-          </Link>
-        </Button>
+        </> : null }
+        { user ? 
+        <BasicMenu />
+        : null }
       </Toolbar>
       <Toolbar
         component="nav"
         variant="dense"
         sx={{ justifyContent: "space-between", overflowX: "auto" }}>
         {sections.map((section) => (
-          <Typography variant="body2">
+          <Typography variant="body2"
+          key={section.title}>
             <Link
               style={{ color: "inherit", p: 1, flexShrink: 0 }}
-              key={section.title}
               to={section.page}>
               {section.title}
             </Link>
