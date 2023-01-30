@@ -1,7 +1,7 @@
 # Getting Started with Create React App
 
-<!-- PROJECT NAME - SKATE MATES -->
-CHANGE 
+PROJECT NAME - SKATE MATES
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts

@@ -13,8 +13,8 @@ const routeHelpers = require('../helperFns/routeHelpers');
 
 // Follow POST
 router.post('/', async function (req, res) {
-    const { followingID } = req.body;
-    const userID = 3
+    const { followingID, userID } = req.body;
+    // const userID = 3
     try {
         const follower = await User.findByPk(userID);
         const following = await User.findByPk(followingID);
