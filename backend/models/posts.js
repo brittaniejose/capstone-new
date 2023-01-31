@@ -44,7 +44,8 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     },
     media: DataTypes.ARRAY(DataTypes.JSON),
-    userID: DataTypes.INTEGER
+    userID: DataTypes.INTEGER,
+    deleted: DataTypes.BOOLEAN
   }, {
     sequelize,
     modelName: 'Post',

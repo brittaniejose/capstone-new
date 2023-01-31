@@ -3,11 +3,15 @@ import PostsMainImage from './PostsMainImage';
 import FeaturedCard from './FeaturedCard';
 import Alert from "@mui/material/Alert";
 import Grid from '@mui/material/Grid';
+import CreatePostBtn from './CreatePostBtn';
+import CreatePost from './CreatePost';
 
 function Posts() {
   const [serverError, setServerError] = useState('');
   const [postsFetched, setPostsFetched] = useState(false);
   const [posts, setPosts] = useState([]);
+  const [open, setOpen] = useState(false);
+
 
   useEffect(() => {
     getPosts();
@@ -32,10 +36,16 @@ function Posts() {
       } 
     }
   };
+
+  const handleClick = () => {
+    setOpen(!open);
+  };
+
   return (
     <div>
       <PostsMainImage />
       { serverError ? <Alert severity="error">{serverError}</Alert> : null }
+      <CreatePostBtn handleClick={handleClick}/>
       { postsFetched ? (
         <Grid container spacing={4}>
         {posts.map(post => {
@@ -45,6 +55,7 @@ function Posts() {
       })}
       </Grid>
       ) : null}
+      <CreatePost open={open} setOpen={setOpen}/>
     </div>
   )
 }

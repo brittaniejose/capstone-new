@@ -9,37 +9,30 @@ import { useNavigate } from "react-router-dom";
 import { useContext } from 'react';
 import { UserContext } from '../Contexts';
 
-export default function Author({data}) {
-  const [followed, setFollowed] = useState(false);
+export default function Author({data, findFollowing, follow, followed}) {
   const user = useContext(UserContext);
+  const [isUser, setIsUser] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    findFollowing(data.User.id);
+    checkIfUser();
+  }, [followed, isUser]);
 
   const toProfile = () => {
     navigate('/profile');
   };
-  console.log(user.following, "user is following")
-  const isFollowing = user.following.includes(data.User.id);
-  console.log(isFollowing, 'isFollowing boolean');
-  
-  const follow = async () => {
-    const followObj = {
-      followingID: data.User.id,
 
+  const checkIfUser = () => {
+    console.log(data.User.id, 'post userID');
+    console.log(user.id, 'logged in userID author comp')
+    if (data.User.id === user.id) {
+      setIsUser(true);
+    } else {
+      setIsUser(false);
     }
-    const response = await fetch("http://localhost:3000/follow", {
-      method: "POST",
-      headers: { "Content-Type": "application/json"},
-      body: JSON.stringify(followObj),
-    });
-
-    const resFollow = await response.json();
-    console.log(resFollow, 'follow response');
-
-    if (resFollow.message) {
-      console.log(resFollow.message);
-      setFollowed(true);
-    }
-  };
+    console.log(isUser, 'isUser boolean')
+  }
 
   return (
     <Grid item xs={12} md={3}>
@@ -60,8 +53,9 @@ export default function Author({data}) {
       />
       <Typography>{data.User.displayName}</Typography>
       <Typography>{data.User.username}</Typography>
-      <Button variant="contained" onClick={follow}>{followed ? 'Following' : 'Follow'}</Button>
-      <Button size="small" onClick={toProfile}>See Profile</Button>
+      { !isUser ? (
+      <Button variant="contained" size="small" onClick={() => follow(data.User.id)}>{followed ? 'Following' : 'Follow'}</Button> ) : null }
+      <Button size="small" onClick={toProfile}>{isUser ? "Your Profile" : "See Profile" }</Button>
     </Paper>
   </Grid>
   )

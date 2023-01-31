@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const Sequelize = require('sequelize');
+const db  = require('../models/index');
 const { Op } = require('sequelize');
 const { User, Follow, Post, Location, Tag } = require('../models')
 const routeHelpers = require('../helperFns/routeHelpers');
@@ -14,20 +15,31 @@ const routeHelpers = require('../helperFns/routeHelpers');
 // Follow POST
 router.post('/', async function (req, res) {
     const { followingID, userID } = req.body;
+    console.log(followingID, 'following id');
+    console.log(userID, 'user id')
     // const userID = 3
     try {
         const follower = await User.findByPk(userID);
         const following = await User.findByPk(followingID);
 
-        const follow = await Follow.create({ followerID: userID, followingID});
-        await follow.setFollower(follower);
-        await follow.setFollowing(following);
-
-        const followObj = {
-            follow: follow,
-            message: "Follow success"
+        const exisitingFollow = await Follow.findOne({ where: { followerID: userID, followingID: followingID }});
+        if (exisitingFollow) {
+            await db.sequelize.query(
+                `DELETE FROM "Follow_Following" WHERE "followID" = ${exisitingFollow.id}`
+            );
+            await db.sequelize.query(
+                `DELETE FROM "Follow_Follower" WHERE "followID" = ${exisitingFollow.id}`
+            );
+            await Follow.destroy({ where: { followerID: userID, followingID: followingID }});
+            res.status(200).json({ message: `Unfollowed @${following.username}` });
+        } else {
+            const follow = await Follow.create({ followerID: userID, followingID: followingID });
+            await follow.setFollower(follower);
+            await follow.setFollowing(following);
+    
+            res.status(200).json({follow, message: `Followed @${following.username}`});
         }
-        res.status(200).json(followObj);
+
     } catch (error) {
         console.log(error);
         res.status(500).json({serverMessage: "Our server is experiencing some issues. Please try again later"})

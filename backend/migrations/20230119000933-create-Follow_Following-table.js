@@ -16,7 +16,6 @@ module.exports = {
           model: 'Follows',
           key: 'id',
           onDelete: 'CASCADE',
-          onUpdate: 'NO ACTION'
         }
       },
       followingID: {
@@ -25,7 +24,6 @@ module.exports = {
           model: 'Users',
           key: 'id',
           onDelete: 'CASCADE',
-          onUpdate: 'NO ACTION'
         },
       },
       createdAt: {

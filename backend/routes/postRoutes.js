@@ -1,14 +1,20 @@
 var express = require('express');
 var router = express.Router();
+require('dotenv').config();
 const Sequelize = require('sequelize');
-const { User, Post, Tag, Hashtag, Post_Tag, Post_Hashtag } = require("../models")
+const { User, Post, Tag, Hashtag, Post_Tag, Post_Hashtag, Comment } = require("../models");
+const Upload = require('upload-js');
 const routeHelpers = require('../helperFns/routeHelpers');
 
+const upload = Upload({
+    apiKey: process.env.UPLOAD_API_KEY
+  });
+  
 // Fetch in Feed component
 // Posts GET All
 router.get('/', async function (req, res) {
     try {
-        let posts = await Post.findAll({
+        let posts = await Post.findAll({ where: { deleted: false },
             include: [
                 { model: User, attributes: ["id", "username", "displayName", "icon"] },
                 { model: Tag, attributes: ["name"] }
@@ -87,7 +93,7 @@ router.post('/create', async function (req, res) {
     const { title, content, media, userID, tagName } = req.body;
 
     try {
-        const post = await Post.create({ title, content, media, userID });
+        const post = await Post.create({ title, content, media, userID, deleted: false });
 
         const hash_tags = routeHelpers.checkForHashtag(post.content);
         let hashtagsRes = [];
@@ -143,6 +149,28 @@ router.post('/create', async function (req, res) {
 
 });
 
+router.post('/delete', async function (req, res) {
+    const { postID } = req.body;
+    try {
+        const post = await Post.findOne({ where: { id: postID } });
+        await post.update({ deleted: true });
+        res.status(200).json({message: 'Post deleted'});
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({serverMessage: "Our server is experiencing some issues. Please try again later"});
+    }
+})
 
+router.post('/edit', async function (req, res) {
+    const { postID, title, content, media } = req.body;
+    try {
+        const post = await Post.findOne({ where: { id: postID }});
+        await post.update({ title, content, media })
+        res.status(200).json({message: 'Post Saved'})
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({serverMessage: "Our server is experiencing some issues. Please try again later"});
+    }
+});
 
 module.exports = router;

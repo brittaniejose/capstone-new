@@ -20,7 +20,8 @@
     "passport": "^0.6.0",
     "passport-local": "^1.0.0",
     "pg": "^8.8.0",
-    "sequelize": "^6.28.0"
+    "sequelize": "^6.28.0",
+    "upload-js": "^2.8.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.12",
