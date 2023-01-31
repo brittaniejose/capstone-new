@@ -15,7 +15,6 @@ module.exports = {
           model: 'Users',
           key: 'id',
           onDelete: 'CASCADE',
-          onUpdate: 'NO ACTION'
         },
       },
       followingID: {
@@ -24,7 +23,6 @@ module.exports = {
           model: 'Users',
           key: 'id',
           onDelete: 'CASCADE',
-          onUpdate: 'NO ACTION'
         },
       },
       blocked: {

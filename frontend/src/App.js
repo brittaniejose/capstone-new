@@ -16,11 +16,13 @@ import Profile from './components/Profile';
 import Locations from './components/Locations';
 import Tips from './components/Tips';
 import Tutorials from './components/Tutorials';
-import Following from './components/Following'
+import Following from './components/Following';
+
 
 function App() {
   const theme = createTheme();
   const [following, setFollowing] = useState([]);
+  const [followed, setFollowed] = useState(false);
   const [followingFetched, setFollowingFetched] = useState(false);
 
   useEffect(() => {
@@ -35,7 +37,7 @@ function App() {
       const displayName = localStorage.getItem("displayName");
   
       const user = {
-        id: userID,
+        id: Number(userID),
         username: username,
         displayName: displayName,
         following: [...following]
@@ -64,6 +66,33 @@ function App() {
     }
   };
 
+  const findFollowing = (followingID) => {
+    if (following.find(f => f.id === followingID)) {
+      setFollowed(true);
+    }
+  }
+  console.log(user.id, 'logged in userID')
+  const follow = async (followingID) => {
+    const followObj = {
+      followingID: followingID,
+      userID: user.id
+    }
+    const response = await fetch("http://localhost:3000/follow", {
+      method: "POST",
+      headers: { "Content-Type": "application/json"},
+      body: JSON.stringify(followObj),
+    });
+
+    const resFollow = await response.json();
+
+    if (resFollow.message.includes('Followed')) {
+      console.log(resFollow.message);
+      setFollowed(true);
+    } else {
+      setFollowed(false);
+    }
+  };
+
   return (
     <UserContext.Provider value={user}>
     <ThemeProvider theme={theme}>
@@ -78,7 +107,7 @@ function App() {
             <Route path="/userProfile" element={<UserProfile />}/>
             <Route path="/profile" element={<Profile />}/>
             <Route path="/posts" element={<Posts />}/>
-            <Route path="/post" element={<SinglePost />}/>
+            <Route path="/post" element={<SinglePost findFollowing={findFollowing} follow={follow} followed={followed}/>}/>
             <Route path="/locations" element={<Locations />}/>
             <Route path="/tips" element={<Tips />}/>
             <Route path="/tutorials" element={<Tutorials />}/>

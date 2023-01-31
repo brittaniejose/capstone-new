@@ -11,7 +11,6 @@ export default function FeaturedCard({data}) {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    console.log('link clicked')
     localStorage.setItem('postID', data.id);
     navigate('/post');
   }
