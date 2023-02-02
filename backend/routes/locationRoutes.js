@@ -19,7 +19,7 @@ router.get('/', async function (req, res) {
             return location;
         });
 
-        res.status(200).json(modifiedLocations);
+        res.status(200).json({locations: modifiedLocations, resource: 'location'});
         
     } catch (error) {
         console.log(error, "location GET ALL error")
@@ -85,7 +85,7 @@ router.get('/:locationID', async function (req, res) {
     const { locationID } = req.params;
 
     try {
-        const location = await Location.findOne({ where: { id: locationID }});
+        const location = await Location.findOne({ where: { id: locationID }, include: [ { model: User, attributes: ["id", "username", "displayName", "icon"] }]});
         console.log(location, 'queried location');
         res.status(200).json(location);
 

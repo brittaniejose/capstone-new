@@ -10,18 +10,17 @@ import Button from "@mui/material/Button";
 import Comments from "./Comments";
 import { useContext } from "react";
 import { UserContext } from "../Contexts";
-import EditPost from "./EditPost";
+// import EditPost from "./EditPost";
+import MapCard from "./MapCard";
 import ImageCard from "./ImageCard";
 
-export default function SinglePost({ findFollowing, follow, followed }) {
-  const postID = localStorage.getItem("postID");
+export default function SingleLocation({ findFollowing, follow, followed, isLoaded }) {
+  const locationID = localStorage.getItem("locationID");
   const resource = localStorage.getItem('resource');
   const [serverError, setServerError] = useState("");
   const [deleteSuccess, setDeleteSuccess] = useState("");
-  const [post, setPost] = useState({});
-  const [tags, setTags] = useState([]);
-  const [postFetched, setPostFetched] = useState(false);
-  const [tagsFetched, setTagsFetched] = useState(false);
+  const [location, setLocation] = useState({});
+  const [locationFetched, setLocationFetched] = useState(false);
   const [open, setOpen] = useState(false);
   const [editSuccess, setEditSuccess] = useState(false);
   const navigate = useNavigate();
@@ -29,41 +28,38 @@ export default function SinglePost({ findFollowing, follow, followed }) {
 
 
   useEffect(() => {
-    getPost();
-  }, [postFetched, tagsFetched, editSuccess]);
+    getLocation();
+  }, [locationFetched, editSuccess]);
 
-  const getPost = async () => {
-    const response = await fetch(`http://localhost:3000/posts/${postID}`, {
+  const getLocation = async () => {
+    const response = await fetch(`http://localhost:3000/locations/${locationID}`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
     });
 
-    const resPost = await response.json();
-    console.log(resPost, "posts GET");
+    const resLocation = await response.json();
+    console.log(resLocation, "location GET");
 
-    if (resPost.serverMessage) {
-      setServerError(resPost.serverMessage);
+    if (resLocation.serverMessage) {
+      setServerError(resLocation.serverMessage);
     } else {
-      setPost({ ...resPost });
-      if (resPost.Tags.length > 0) {
-        setTags([...resPost.Tags]);
-        setTagsFetched(true);
-      }
-      if (post) {
-        console.log(post, "post setState");
-        setPostFetched(true);
+        setLocation({ ...resLocation });
+      if (location) {
+        console.log(location, "location setState");
+        console.log(location.coordinates, 'location coordinates')
+        setLocationFetched(true);
       }
     }
   };
 
-  const handleClickedTag = () => {
-    navigate("/tips");
-  };
+//   const handleClickedTag = () => {
+//     navigate("/tips");
+//   };
 
   const handleDelete = async () => {
-    const response = await fetch(`http://localhost:3000/posts/delete`, {
+    const response = await fetch(`http://localhost:3000/locations/delete`, {
       method: "POST",
-      body: JSON.stringify({ postID }),
+      body: JSON.stringify({ locationID }),
       headers: { "Content-Type": "application/json" },
     });
     const resDelete = await response.json();
@@ -76,58 +72,49 @@ export default function SinglePost({ findFollowing, follow, followed }) {
     }
   };
 
-  const handleEdit = () => {
-    setOpen(true)
-  };
+//   const handleEdit = () => {
+//     setOpen(true)
+//   };
 
   return (
     <Grid container spacing={5} sx={{ mt: 3 }}>
       <Grid item xs={12} md={12}>
       {serverError ? <Alert severity="error">{serverError}</Alert> : null}
       </Grid>
-      {postFetched ? (
+      {locationFetched ? (
         <React.Fragment>
           <Grid item xs={12} md={9} sx={{ py: 5 }}>
             <Grid container spacing={1} >
               <Grid item xs={9.5} md={9.5} sx={{ display: "flex" }}>
               <Typography variant="h4" gutterBottom sx={{ mr: 5 }}>
-                {post.title}
+                {location.header}
               </Typography>
-              {tagsFetched ? (
-                <Badge
-                  color="secondary"
-                  badgeContent={tags[0].name}
-                  sx={{ mt: 2.7, cursor: "pointer" }}
-                  onClick={handleClickedTag}></Badge>
-              ) : null}
               </Grid>
               <Grid item xs={2.5} md={2.5}>
               <Typography sx={{ mt: 2, justifySelf: 'end' }}>
-                {(post.createdAt = new Date(post.createdAt).toLocaleString("en-US"))}
+                {(location.createdAt = new Date(location.createdAt).toLocaleString("en-US"))}
               </Typography>
               </Grid>
             </Grid>
             <Divider sx={{ mb: 5 }} />
-            <Typography variant="p">{post.content}</Typography>
+            <Typography variant="p">{location.content}</Typography>
             <br />
-            {post.User.id === user.id ? 
+            {location.User.id === user.id ? 
             <React.Fragment>
-              <Button onClick={handleDelete}>Delete Post</Button>
-              <Button onClick={handleEdit}>Edit Post</Button> 
+              <Button onClick={handleDelete}>Delete Location</Button>
+              {/* <Button onClick={handleEdit}>Edit Location</Button>  */}
             </React.Fragment>
             : null }
           </Grid>
           <Author
-            data={post}
+            data={location}
             findFollowing={findFollowing}
             follow={follow}
             followed={followed}
           />
-          <Comments data={post} resource={resource} />
-          { post.media ? (
-          <ImageCard media={post.media[0]}/>
-          ): null }
-          <EditPost open={open} setOpen={setOpen} post={post} postID={postID} />
+          <Comments data={location} resource={resource} />
+          <MapCard isLoaded={isLoaded} coordinates={location.coordinates} name={location.name}/>
+          {/* <EditPost open={open} setOpen={setOpen} location={post} postID={postID} /> */}
         </React.Fragment>
       ) : null}
     </Grid>

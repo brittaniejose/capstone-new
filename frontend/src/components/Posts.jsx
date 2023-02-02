@@ -10,6 +10,7 @@ function Posts() {
   const [serverError, setServerError] = useState('');
   const [postsFetched, setPostsFetched] = useState(false);
   const [posts, setPosts] = useState([]);
+  const [resource, setResource] = useState('');
   const [open, setOpen] = useState(false);
 
 
@@ -29,9 +30,11 @@ function Posts() {
     if (resPosts.serverMessage) {
       setServerError(resPosts.serverMessage);
     } else {
-      setPosts([...resPosts]);
+      setPosts([...resPosts.posts]);
+      setResource(resPosts.resource)
       if (posts) {
         console.log(posts, 'posts setState')
+        console.log(resource, 'resource set state')
         setPostsFetched(true);
       } 
     }
@@ -50,7 +53,7 @@ function Posts() {
         <Grid container spacing={4}>
         {posts.map(post => {
         return (
-        <FeaturedCard data={post} key={post.id}/>
+        <FeaturedCard data={post} key={post.id} resource={resource}/>
         )
       })}
       </Grid>

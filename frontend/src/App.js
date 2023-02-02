@@ -9,6 +9,7 @@ import Header from './components/Header';
 import Home from './components/Home';
 import Posts from './components/Posts';
 import SinglePost from './components/SinglePost';
+import SingleLocation from './components/SingleLocation';
 import Signup from './components/Signup';
 import Login from './components/Login';
 import UserProfile from './components/UserProfile';
@@ -17,6 +18,7 @@ import Locations from './components/Locations';
 import Tips from './components/Tips';
 import Tutorials from './components/Tutorials';
 import Following from './components/Following';
+import { useLoadScript } from "@react-google-maps/api";
 
 
 function App() {
@@ -24,6 +26,11 @@ function App() {
   const [following, setFollowing] = useState([]);
   const [followed, setFollowed] = useState(false);
   const [followingFetched, setFollowingFetched] = useState(false);
+
+  const libraries = ["places"]
+  const { isLoaded } = useLoadScript({
+    googleMapsApiKey: "AIzaSyDlHRPWLON6plruqrryhZbJoUHFZcJEc-w", libraries: libraries,
+  })
 
   useEffect(() => {
     getFollowing();
@@ -108,6 +115,7 @@ function App() {
             <Route path="/profile" element={<Profile />}/>
             <Route path="/posts" element={<Posts />}/>
             <Route path="/post" element={<SinglePost findFollowing={findFollowing} follow={follow} followed={followed}/>}/>
+            <Route path="/location" element={<SingleLocation findFollowing={findFollowing} follow={follow} followed={followed} isLoaded={isLoaded}/>}/>
             <Route path="/locations" element={<Locations />}/>
             <Route path="/tips" element={<Tips />}/>
             <Route path="/tutorials" element={<Tutorials />}/>
