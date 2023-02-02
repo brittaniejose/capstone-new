@@ -26,15 +26,16 @@ function App() {
   const [following, setFollowing] = useState([]);
   const [followed, setFollowed] = useState(false);
   const [followingFetched, setFollowingFetched] = useState(false);
-
+  const [user, setUser] = useState(null);
 
   const libraries = ["places"]
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: "AIzaSyDlHRPWLON6plruqrryhZbJoUHFZcJEc-w", libraries: libraries,
   })
-  const user = {}
+
+
   useEffect(() => {
-    user = getContext().then(()=>{if(user){getFollowing()}});
+    getContext().then(()=>{if(user){getFollowing()}});
   }, [])
 
   const getContext = () => {
@@ -51,9 +52,9 @@ function App() {
           displayName: displayName,
           following: [...following]
         };
-        return user;
-      }else {
-        window.location.href="http://localhost:3001/#/login"
+        setUser(user)
+      } else {
+        setUser(null)
       }
     });
   } 
@@ -67,6 +68,7 @@ function App() {
   
   
   const getFollowing = async () => {
+    console.log(user, 'user get follow');
 
     const response = await fetch (`http://localhost:3000/follow/following/${user.id}`, {
       method: 'GET',
@@ -88,7 +90,7 @@ function App() {
       setFollowed(true);
     }
   }
-  console.log(user.id, 'logged in userID')
+
   const follow = async (followingID) => {
     const followObj = {
       followingID: followingID,
