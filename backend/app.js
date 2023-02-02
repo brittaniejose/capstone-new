@@ -1,6 +1,10 @@
+if(process.env.NODE_ENV !== 'production'){
+    require ('dotenv').config()
+  }
+
 var express = require('express');
 var path = require('path');
-require('dotenv').config();
+// require('dotenv').config();
 const cors = require('cors');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
