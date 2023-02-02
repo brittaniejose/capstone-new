@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import { Link } from "react-router-dom";
@@ -7,11 +7,9 @@ import Box from "@mui/material/Box";
 import Dialog from "@mui/material/Dialog";
 import Typography from "@mui/material/Typography";
 import Alert from "@mui/material/Alert";
-import { useContext } from "react";
-import { UserContext } from "../Contexts";
-import TagSelector from "./TagSelector";
+import Input from "@mui/material/Input";
 import CancelIcon from '@mui/icons-material/Cancel';
-import AddPhoto from "./AddPhoto";
+import { useNavigate } from "react-router-dom";
 
 function Copyright() {
   return (
@@ -26,40 +24,38 @@ function Copyright() {
   );
 }
 
-export default function CreatePost({ open, setOpen }) {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [media, setMedia] = useState([]);
+export default function EditPost({ open, setOpen, post, postID }) {
+  const [title, setTitle] = useState(post.title);
+  const [content, setContent] = useState(post.content);
+  const [media, setMedia] = useState(post.media);
   const [postSuccess, setPostSuccess] = useState("");
   const [serverError, setServerError] = useState("");
-  const [tag, setTag] = useState('');
-  const user = useContext(UserContext);
+
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(tag, 'tag in handle submit');
-    console.log(user, 'user from use context');
+
     const post = {
+      postID: postID,
       title,
       content,
       media,
-      tagName: tag,
-      userID: user.id,
     };
 
-    const response = await fetch("http://localhost:3000/posts/create", {
+    const response = await fetch("http://localhost:3000/posts/edit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(post),
     });
 
     const resPost = await response.json();
-    console.log(resPost, "post response @ create post");
+    console.log(resPost, "user response @ signup form ln 55");
 
     if (resPost.postError) {
       setServerError(resPost.postError);
     } else {
-      console.log("post created");
+      console.log(resPost.message);
       setPostSuccess(resPost.message);
       setOpen(!open);
       window.location.reload();
@@ -70,47 +66,29 @@ export default function CreatePost({ open, setOpen }) {
     setOpen(!open);
   };
 
-  const stagePhotos = (url, name) => {
-    const photosArray = []
-    photosArray.push({url: url, name: name});
-    console.log(photosArray, 'photos array @ stage photos');
-    setMedia([...photosArray]);
-  }
   return (
     <Dialog open={open}>
-      <div style={{ padding: 10, cursor: "pointer" }} onClick={handleClose}>
-        <CancelIcon />
-      </div>
+        <div style={{ padding: 10, cursor: 'pointer' }} onClick={handleClose}>
+        <CancelIcon/>
+        </div>
       <Box
         sx={{
           marginTop: 8,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          width: '500px'
         }}>
-        {serverError ? <Alert severity="error">{serverError}</Alert> : null}
-        {postSuccess ? <Alert severity="success">{postSuccess}</Alert> : null}
         <Typography component="h1" variant="h5">
-          Create Post
+          Edit Post
         </Typography>
         <Box
           component="form"
           noValidate
           sx={{
             mt: 3,
-            width: '400px'
           }}
           onSubmit={(e) => handleSubmit(e)}>
-          <Grid
-            container
-            spacing={2}
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              margin: "auto",
-              pl: 3,
-            }}>
+          <Grid container spacing={2} sx={{ display: 'flex', flexDirection: 'column', margin: 'auto', pl: 3}}>
             <Grid item xs={12} md={10}>
               <TextField
                 autoComplete="given-name"
@@ -120,6 +98,7 @@ export default function CreatePost({ open, setOpen }) {
                 id="title"
                 label="Title"
                 autoFocus
+                value={title}
                 onChange={(e) => setTitle(e.target.value)}
               />
             </Grid>
@@ -133,21 +112,25 @@ export default function CreatePost({ open, setOpen }) {
                 label="Content"
                 name="content"
                 autoComplete="content"
+                value={content}
                 onChange={(e) => setContent(e.target.value)}
               />
             </Grid>
             <Grid item xs={12} md={10}>
-              <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
-              <TagSelector tag={tag} setTag={setTag}
-               />
-              <AddPhoto stagePhotos={stagePhotos}/>
-              <Button
-                type="submit"
-                variant="contained"
-                sx={{ mt: 3, mb: 2, width: "25%", float: "center" }}>
-                Create
-              </Button>
-              </div>
+              <Input
+                id="media"
+                label="Media"
+                name="media"
+                autoComplete="media"
+                type="file"
+                onChange={(e) => setMedia(e.target.value)}
+              />
+          <Button
+            type="submit"
+            variant="contained"
+            sx={{ mt: 3, mb: 2, width: '25%', float: 'center'}}>
+            Save
+          </Button>
             </Grid>
           </Grid>
         </Box>
