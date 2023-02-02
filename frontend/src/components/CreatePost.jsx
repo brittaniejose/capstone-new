@@ -62,6 +62,7 @@ export default function CreatePost({ open, setOpen }) {
       console.log("post created");
       setPostSuccess(resPost.message);
       setOpen(!open);
+      window.location.reload();
     }
   };
 
