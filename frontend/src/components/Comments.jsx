@@ -19,12 +19,13 @@ function Comments({ data, resource }) {
   const [commentLikes, setCommentLikes] = useState([]);
   const [likesFetched, setLikesFetched] = useState(false);
   const [serverError, setServerError] = useState("");
+  const [liked, setLiked] = useState(false);
   const user = useContext(UserContext);
 
   useEffect(() => {
     getComments();
     fetchCommentLikes();
-  }, [commentsFetched, likesFetched]);
+  }, [commentsFetched, likesFetched, liked]);
 
   const resourceRoute = () => {}
   const getComments = async () => {
@@ -143,7 +144,7 @@ function Comments({ data, resource }) {
                                 : "like"}
                             </Typography>
                           }></ListItemText>
-                      <Like alreadyLiked={commentLikes[index].liked} resourceType='comment' resourceID={comment.id} />
+                      <Like alreadyLiked={commentLikes[index].liked} resourceType='comment' resourceID={comment.id} setLiked={setLiked} liked={liked} />
                       </ListItem>
                     </div>
                   ) : null}

@@ -29,6 +29,55 @@ router.get('/', async function (req, res) {
     }
 });
 
+//GET ALL TIPS POSTS
+router.get('/tips', async function (req, res) {
+
+    try {
+        const tipPosts = await Post.findAll({
+            where: {'$Tags.name$': 'tip' },
+            include: [
+                { model: Tag },
+                { model: User, attributes: ["id", "username", "displayName", "icon"] }
+            ]
+        });
+
+        const modifiedTipPosts = tipPosts.map(post => {
+            post.User.username = "@" + post.User.username;
+            routeHelpers.checkForTag(post.Tags)
+            return post;
+        });
+
+        res.status(200).json({posts: modifiedTipPosts, resource: 'post'});
+
+    } catch (error) {
+        res.status(500).json({serverMessage: "Our server is experiencing some issues. Please try again later"});
+    }
+});
+//GET ALL TUTPRIALS POSTS
+router.get('/tutorials', async function (req, res) {
+
+    try {
+        const tutorialPosts = await Post.findAll({
+            where: {'$Tags.name$': 'tutorial' },
+            include: [
+                { model: Tag },
+                { model: User, attributes: ["id", "username", "displayName", "icon"] }
+            ]
+        });
+
+        const modifiedTutorialPosts = tutorialPosts.map(post => {
+            post.User.username = "@" + post.User.username;
+            routeHelpers.checkForTag(post.Tags)
+            return post;
+        });
+
+        res.status(200).json({posts: modifiedTutorialPosts, resource: 'post'});
+
+    } catch (error) {
+        res.status(500).json({serverMessage: "Our server is experiencing some issues. Please try again later"});
+    }
+});
+
 // GET All Posts for USER
 router.get('/user/:username', async function (req, res) {
     // Do you want to add username to get route via retrieval of username from auth middleware? Or keep param as userID?
@@ -111,7 +160,7 @@ router.post('/create', async function (req, res) {
         
         let postTagRes = ""
 
-        if (tagName) {
+        if (tagName !== '') {
             const cleanedTagName = tagName.replace("#", "");
             console.log(cleanedTagName, "cleaned tag from req body")
             const [tag, created] = await Tag.findOrCreate({ where: { name: cleanedTagName }});

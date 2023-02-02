@@ -4,8 +4,8 @@ import { Typography } from '@mui/material';
 
 function AddPhoto({stagePhotos}) {
   return (
-<div style={{height:"41px"}} >
-        <Typography variant='body2'>
+<div>
+        <Typography variant='body2' align='center' sx={{ mb: '5px'}}>
             Upload Photos
         </Typography>
             <Widget

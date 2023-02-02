@@ -10,11 +10,11 @@ import { Outlet } from "react-router-dom";
 import { useContext } from 'react';
 import { UserContext } from '../Contexts';
 import BasicMenu from "./BasicMenu";
+import Footer from "./Footer";
 import { maxHeight } from "@mui/system";
 
 function Header() {
   const user = useContext(UserContext);
-  //   const { sections, title } = props;
   const sections = [
     { title: "Posts", page: "posts" },
     { title: "Locations", page: "locations" },
@@ -84,18 +84,9 @@ function Header() {
         ))}
       </Toolbar>
       <Outlet />
+      <Footer />
     </React.Fragment>
   );
 }
-
-// Header.propTypes = {
-//   sections: PropTypes.arrayOf(
-//     PropTypes.shape({
-//       title: PropTypes.string.isRequired,
-//       url: PropTypes.string.isRequired,
-//     }),
-//   ).isRequired,
-//   title: PropTypes.string.isRequired,
-// };
 
 export default Header;
