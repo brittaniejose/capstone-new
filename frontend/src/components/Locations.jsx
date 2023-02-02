@@ -3,6 +3,9 @@ import LocationsMainImage from './LocationsMainImage';
 import FeaturedCard from './FeaturedCard';
 import Alert from "@mui/material/Alert";
 import Grid from '@mui/material/Grid';
+import CreatePostBtn from './CreatePostBtn';
+// import CreatePost from './CreatePost';
+import CreateLocation from './CreateLocation';
 
 function Locations() {
   const [serverError, setServerError] = useState('');
@@ -44,7 +47,7 @@ function Locations() {
     <div>
       <LocationsMainImage />
       { serverError ? <Alert severity="error">{serverError}</Alert> : null }
-      {/* <CreatePostBtn handleClick={handleClick}/> */}
+      <CreatePostBtn handleClick={handleClick}/>
       { locationsFetched ? (
         <Grid container spacing={4}>
         {locations.map(location => {
@@ -54,7 +57,7 @@ function Locations() {
       })}
       </Grid>
       ) : null}
-      {/* <CreatePost open={open} setOpen={setOpen}/> */}
+      <CreateLocation open={open} setOpen={setOpen}/>
     </div>
   )
 }

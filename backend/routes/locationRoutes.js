@@ -97,9 +97,8 @@ router.get('/:locationID', async function (req, res) {
 
 // Locations POST Route
 router.post('/create', async function (req, res) {
-    const { content, coordinates, name, userID } = req.body
+    const { content, coordinates, name, displayName, userID } = req.body
     // GET USERID and username FROM REQ.USER IN AUTH MIDDLEWARE and remove from req.body. remove hardcoded name and replace with displayname or username
-    const displayName = "Wednesday"
     const header = `${displayName} was at ${name}`
     try {
         const location = await Location.create({ header, content, coordinates, name, userID: userID })
