@@ -38,7 +38,7 @@ export default function CreatePost({ open, setOpen }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(tag, 'tag in handle submit');
-    console.log(user, 'user from use context');
+    
     const post = {
       title,
       content,

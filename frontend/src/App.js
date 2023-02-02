@@ -1,7 +1,7 @@
 import './App.css';
 import React, { useState, useEffect } from 'react'
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { HashRouter, Routes as Switch, Route, useNavigate } from "react-router-dom";
+import { HashRouter, Routes as Switch, Route } from "react-router-dom";
 import { UserContext } from './Contexts';
 import CssBaseline from '@mui/material/CssBaseline';
 import Container from '@mui/material/Container';
@@ -26,50 +26,38 @@ function App() {
   const [following, setFollowing] = useState([]);
   const [followed, setFollowed] = useState(false);
   const [followingFetched, setFollowingFetched] = useState(false);
-  const [user, setUser] = useState(null);
 
   const libraries = ["places"]
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: "AIzaSyDlHRPWLON6plruqrryhZbJoUHFZcJEc-w", libraries: libraries,
   })
 
-
   useEffect(() => {
-    getContext().then(()=>{if(user){getFollowing()}});
-  }, [])
+    getFollowing();
+  }, [followingFetched])
 
   const getContext = () => {
-    return new Promise(() => {
-      if (localStorage.length > 0) {
-        const userID = localStorage.getItem("userID");
-        const token = localStorage.getItem("token");
-        const username = localStorage.getItem("username");
-        const displayName = localStorage.getItem("displayName");
-    
-        const user = {
-          id: Number(userID),
-          username: username,
-          displayName: displayName,
-          following: [...following]
-        };
-        setUser(user)
-      } else {
-        setUser(null)
-      }
-    });
+    if (localStorage.length > 0) {
+      const userID = localStorage.getItem("userID");
+      const token = localStorage.getItem("token");
+      const username = localStorage.getItem("username");
+      const displayName = localStorage.getItem("displayName");
+  
+      const user = {
+        id: Number(userID),
+        username: username,
+        displayName: displayName,
+        following: [...following]
+      };
+      return user;
+    }else {
+      const user = null;
+      return user;
+    }
   } 
-      
-  // const user = getContext().then(() => { 
-  //   if(user){
-  //     getFollowing()
-  //   }
-  // });
+  const user = getContext();
 
-  
-  
   const getFollowing = async () => {
-    console.log(user, 'user get follow');
-
     const response = await fetch (`http://localhost:3000/follow/following/${user.id}`, {
       method: 'GET',
       headers: {"Content-Type": "application/json"}
@@ -90,7 +78,7 @@ function App() {
       setFollowed(true);
     }
   }
-
+  console.log(user.id, 'logged in userID')
   const follow = async (followingID) => {
     const followObj = {
       followingID: followingID,

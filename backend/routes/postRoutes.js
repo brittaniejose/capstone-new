@@ -16,7 +16,7 @@ router.get('/', async function (req, res) {
                 { model: Tag, attributes: ["name"] }
             ]
         });
-        console.log(posts, 'posts obj')
+
         const modifiedPosts = posts.map(post => {
             post.User.username = "@" + post.User.username;
             routeHelpers.checkForTag(post.Tags)
