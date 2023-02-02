@@ -11,9 +11,9 @@ import Avatar from "@mui/material/Avatar";
 import Like from "./Like";
 import { useContext } from "react";
 import { UserContext } from "../Contexts";
-import { ListItemIcon } from "@mui/material";
+import Button from "@mui/material/Button";
 
-function Comments({ data }) {
+function Comments({ data, resource }) {
   const [comments, setComments] = useState([]);
   const [commentsFetched, setCommentsFetched] = useState(false);
   const [commentLikes, setCommentLikes] = useState([]);
@@ -26,9 +26,10 @@ function Comments({ data }) {
     fetchCommentLikes();
   }, [commentsFetched, likesFetched]);
 
+  const resourceRoute = () => {}
   const getComments = async () => {
     const response = await fetch(
-      `http://localhost:3000/comments/post/${data.id}`,
+      `http://localhost:3000/comments/${resource}/${data.id}`,
       {
         method: "GET",
         headers: { "Content-Type": "application/json" },
@@ -77,7 +78,7 @@ function Comments({ data }) {
   return (
     <React.Fragment>
       {commentsFetched ? (
-        <Grid item xs={12} md={9} sx={{ py: 5 }}>
+        <Grid item xs={12} md={8} sx={{ py: 5 }}>
           <Typography variant="h5" sx={{ mb: 1 }}>
             Comments
           </Typography>
@@ -153,7 +154,14 @@ function Comments({ data }) {
           </List>
         </Grid>
       ) : (
-        <Typography>Be the first to comment!</Typography>
+        <Grid item xs={12} md={8} sx={{ py: 5 }}>
+        <Typography variant="h5" sx={{ mb: 1 }}>
+          Comments
+        </Typography>
+        <Divider sx={{ mb: 0 }} />
+        <Typography sx={{ mt: 5 }}>Be the first to comment!</Typography>
+        <Button>Comment</Button>
+        </Grid>
       )}
     </React.Fragment>
   );

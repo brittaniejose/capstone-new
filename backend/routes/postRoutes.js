@@ -3,13 +3,9 @@ var router = express.Router();
 require('dotenv').config();
 const Sequelize = require('sequelize');
 const { User, Post, Tag, Hashtag, Post_Tag, Post_Hashtag, Comment } = require("../models");
-const Upload = require('upload-js');
 const routeHelpers = require('../helperFns/routeHelpers');
 
-const upload = Upload({
-    apiKey: process.env.UPLOAD_API_KEY
-  });
-  
+
 // Fetch in Feed component
 // Posts GET All
 router.get('/', async function (req, res) {
@@ -26,7 +22,7 @@ router.get('/', async function (req, res) {
             routeHelpers.checkForTag(post.Tags)
             return post;
         });
-        res.status(200).json(modifiedPosts);
+        res.status(200).json({posts: modifiedPosts, resource: 'post'});
     } catch (error) {
         console.log(error, "error from Post.findAll()")        
         res.status(500).json({serverMessage: "Our server is experiencing some issues. Please try again later"})

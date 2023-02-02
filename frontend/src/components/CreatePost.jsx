@@ -11,7 +11,7 @@ import { useContext } from "react";
 import { UserContext } from "../Contexts";
 import Input from "@mui/material/Input";
 import CancelIcon from '@mui/icons-material/Cancel';
-
+import AddPhoto from "./AddPhoto";
 
 function Copyright() {
   return (
@@ -29,7 +29,7 @@ function Copyright() {
 export default function CreatePost({ open, setOpen }) {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [media, setMedia] = useState(null);
+  const [media, setMedia] = useState([]);
   const [postSuccess, setPostSuccess] = useState("");
   const [serverError, setServerError] = useState("");
   const user = useContext(UserContext);
@@ -51,7 +51,7 @@ export default function CreatePost({ open, setOpen }) {
     });
 
     const resPost = await response.json();
-    console.log(resPost, "user response @ signup form ln 55");
+    console.log(resPost, "post response @ create post");
 
     if (resPost.postError) {
       setServerError(resPost.postError);
@@ -66,6 +66,12 @@ export default function CreatePost({ open, setOpen }) {
     setOpen(!open);
   };
 
+  const stagePhotos = (url, name) => {
+    const photosArray = []
+    photosArray.push({url: url, name: name});
+    console.log(photosArray, 'photos array @ stage photos');
+    setMedia([...photosArray]);
+  }
   return (
     <Dialog open={open}>
       <div style={{ padding: 10, cursor: "pointer" }} onClick={handleClose}>
@@ -125,14 +131,7 @@ export default function CreatePost({ open, setOpen }) {
               />
             </Grid>
             <Grid item xs={12} md={10}>
-              <Input
-                id="media"
-                label="Media"
-                name="media"
-                autoComplete="media"
-                type="file"
-                onChange={(e) => setMedia(e.target.value)}
-              />
+              <AddPhoto stagePhotos={stagePhotos}/>
               <Button
                 type="submit"
                 variant="contained"
