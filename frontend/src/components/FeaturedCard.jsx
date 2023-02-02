@@ -43,7 +43,7 @@ export default function FeaturedCard({data, resource}) {
                 See More
               </Button>
             </CardContent>
-            { data.media ? 
+            { data.media && data.media.length > 0 ? 
             <CardMedia
               component="img"
               sx={{ width: 160, display: { xs: 'none', sm: 'block' } }}

@@ -124,7 +124,7 @@ export default function SinglePost({ findFollowing, follow, followed }) {
             followed={followed}
           />
           <Comments data={post} resource={resource} />
-          { post.media ? (
+          { post.media.length > 0 ? (
           <ImageCard media={post.media[0]}/>
           ): null }
           <EditPost open={open} setOpen={setOpen} post={post} postID={postID} />

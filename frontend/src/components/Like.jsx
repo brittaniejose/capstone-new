@@ -7,14 +7,14 @@ import { ListItemButton, ListItemIcon, Typography } from "@mui/material";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 
-export default function Like({ resourceID, resourceType, alreadyLiked }) {
-  const [liked, setLiked] = useState(false);
+export default function Like({ resourceID, resourceType, alreadyLiked, liked, setLiked }) {
+ 
 
   const user = useContext(UserContext);
 
   useEffect(() => {
     checkExisting();
-  }, [liked]);
+  }, []);
 
   const checkExisting = () => {
     if (alreadyLiked !== false) {
@@ -48,17 +48,18 @@ export default function Like({ resourceID, resourceType, alreadyLiked }) {
   return (
     <div onClick={handleLike} style={{ cursor: "pointer" }}>
       <ListItemIcon>
-        {liked ? (
+        {liked === true ? (
           <React.Fragment>
             <FavoriteIcon />
             <ListItemText secondary="Unlike" />
           </React.Fragment>
-        ) : (
+        ) : null }
+        { liked === false ? (
           <React.Fragment>
-            <FavoriteBorderIcon />
-            <ListItemText secondary="Like" />
-          </React.Fragment>
-        )}
+          <FavoriteBorderIcon />
+          <ListItemText secondary="Like" />
+        </React.Fragment>
+        ): null }
       </ListItemIcon>
     </div>
   );

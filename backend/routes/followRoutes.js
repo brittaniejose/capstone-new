@@ -128,7 +128,7 @@ router.get('/content/:userID', async function (req, res) {
             locations: modifiedLocations
         }
 
-        res.status(200).json({posts: modifiedPosts, locations: modifiedLocations})
+        res.status(200).json({posts: {posts: modifiedPosts, resource: 'post'}, locations: {locations: modifiedLocations, resource: 'location'}})
     } catch (error) {
         console.log(error);
         res.status(500).json({serverMessage: "Our server is experiencing some issues. Please try again later"});

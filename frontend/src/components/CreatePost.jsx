@@ -9,7 +9,7 @@ import Typography from "@mui/material/Typography";
 import Alert from "@mui/material/Alert";
 import { useContext } from "react";
 import { UserContext } from "../Contexts";
-import Input from "@mui/material/Input";
+import TagSelector from "./TagSelector";
 import CancelIcon from '@mui/icons-material/Cancel';
 import AddPhoto from "./AddPhoto";
 
@@ -32,15 +32,18 @@ export default function CreatePost({ open, setOpen }) {
   const [media, setMedia] = useState([]);
   const [postSuccess, setPostSuccess] = useState("");
   const [serverError, setServerError] = useState("");
+  const [tag, setTag] = useState('');
   const user = useContext(UserContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    console.log(tag, 'tag in handle submit');
+    
     const post = {
       title,
       content,
       media,
+      tagName: tag,
       userID: user.id,
     };
 
@@ -83,6 +86,7 @@ export default function CreatePost({ open, setOpen }) {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
+          width: '500px'
         }}>
         {serverError ? <Alert severity="error">{serverError}</Alert> : null}
         {postSuccess ? <Alert severity="success">{postSuccess}</Alert> : null}
@@ -94,6 +98,7 @@ export default function CreatePost({ open, setOpen }) {
           noValidate
           sx={{
             mt: 3,
+            width: '400px'
           }}
           onSubmit={(e) => handleSubmit(e)}>
           <Grid
@@ -131,6 +136,9 @@ export default function CreatePost({ open, setOpen }) {
               />
             </Grid>
             <Grid item xs={12} md={10}>
+              <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}>
+              <TagSelector tag={tag} setTag={setTag}
+               />
               <AddPhoto stagePhotos={stagePhotos}/>
               <Button
                 type="submit"
@@ -138,6 +146,7 @@ export default function CreatePost({ open, setOpen }) {
                 sx={{ mt: 3, mb: 2, width: "25%", float: "center" }}>
                 Create
               </Button>
+              </div>
             </Grid>
           </Grid>
         </Box>
